@@ -1,0 +1,87 @@
+﻿@page
+@model IndexModel
+@*
+This Sample Code is provided for the purpose of illustration only and is not
+intended to be used in a production environment. THIS SAMPLE CODE AND ANY
+RELATED INFORMATION ARE PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER
+EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE.
+
+We grant You a nonexclusive, royalty-free right to use and modify the Sample
+Code and to reproduce and distribute the object code form of the Sample Code,
+provided that You agree: (i) to not use Our name, logo, or trademarks to market
+Your software product in which the Sample Code is embedded; (ii) to include a
+valid copyright notice on Your software product in which the Sample Code is
+embedded; and (iii) to indemnify, hold harmless, and defend Us and Our
+suppliers from and against any claims or lawsuits, including attorneys' fees,
+that arise or result from the use or distribution of the Sample Code.
+
+Please note: None of the conditions outlined in the disclaimer above will
+supersede the terms and conditions contained within the Customers Support
+Services Description.
+*@
+@{
+    ViewData["Title"] = "OBO SharePoint Demo";
+}
+
+<div class="text-center py-5">
+    <h1 class="display-4 mb-4">OBO Graph SharePoint Demo</h1>
+    <p class="lead text-muted mb-4">
+        Demonstração do fluxo On-Behalf-Of (OBO) com Microsoft Entra ID para acessar documentos do SharePoint via Microsoft Graph.
+    </p>
+
+    @if (User.Identity?.IsAuthenticated != true)
+    {
+        <div class="card mx-auto" style="max-width: 480px;">
+            <div class="card-body">
+                <h5 class="card-title">Autenticação necessária</h5>
+                <p class="card-text">
+                    Clique no botão abaixo para entrar com sua conta Microsoft e ver os documentos do SharePoint.
+                </p>
+                <a asp-area="MicrosoftIdentity" asp-controller="Account" asp-action="SignIn"
+                   class="btn btn-primary btn-lg">
+                    🔐 Entrar
+                </a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card mx-auto" style="max-width: 480px;">
+            <div class="card-body">
+                <h5 class="card-title">Bem-vindo, @User.Identity?.Name</h5>
+                <p class="card-text">Você está autenticado. Acesse os documentos do SharePoint.</p>
+                <a asp-page="/Documents" class="btn btn-success btn-lg">
+                    📂 Ver Documentos
+                </a>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">1. Sign-In</h5>
+                <p class="card-text">O usuário faz login com OpenID Connect no navegador.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">2. OBO Exchange</h5>
+                <p class="card-text">O middle-tier troca o token do usuário por um token do Graph usando certificado X.509.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">3. Graph API</h5>
+                <p class="card-text">O Graph retorna os documentos do SharePoint que o usuário autenticado pode acessar.</p>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,749 @@
+<!--
+This Sample Code is provided for the purpose of illustration only and is not
+intended to be used in a production environment. THIS SAMPLE CODE AND ANY
+RELATED INFORMATION ARE PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER
+EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE.
+-->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>On-Behalf-Of (OBO) com Microsoft Graph</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/black.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/monokai.min.css">
+<style>
+  :root {
+    --r-background-color: #07111b;
+    --r-main-color: #e8eefb;
+    --r-heading-color: #7fc8ff;
+    --r-link-color: #8fd4ff;
+    --r-link-color-hover: #c4e7ff;
+    --surface: rgba(13, 21, 37, 0.88);
+    --surface-strong: rgba(16, 27, 46, 0.96);
+    --border: rgba(127, 200, 255, 0.22);
+    --muted: #9aa9c5;
+  }
+  html, body { background: #07111b; }
+  .reveal-viewport {
+    background:
+      radial-gradient(circle at top, rgba(23, 91, 170, 0.34), transparent 36%),
+      radial-gradient(circle at bottom right, rgba(43, 138, 119, 0.20), transparent 26%),
+      linear-gradient(180deg, #09111f 0%, #07111b 100%);
+  }
+  .reveal { font-size: 28px; }
+  .reveal section { padding: 0 0.35em; }
+  .reveal h1, .reveal h2, .reveal h3 { text-transform: none; }
+  .reveal h1 { font-size: 1.8em; }
+  .reveal h2 { font-size: 1.4em; }
+  .reveal h1,
+  .reveal h2,
+  .reveal h3,
+  .reveal p,
+  .reveal ul,
+  .reveal ol,
+  .reveal table,
+  .reveal pre,
+  .reveal .columns,
+  .reveal .flow-board,
+  .reveal .panel,
+  .reveal .card-grid,
+  .reveal .hero-panel {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 1120px;
+  }
+  .reveal h1,
+  .reveal h2,
+  .reveal h3 {
+    text-align: center;
+    margin-bottom: 0.38em;
+  }
+  .reveal p {
+    line-height: 1.45;
+  }
+  .reveal pre {
+    font-size: 0.65em;
+    width: 96%;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+  }
+  .reveal code { font-family: 'Cascadia Code', 'Fira Code', Consolas, monospace; }
+  .reveal .small { font-size: 0.7em; color: var(--muted); }
+  .reveal ul,
+  .reveal ol { text-align: left; width: min(100%, 1040px); }
+  .reveal li { margin-bottom: 0.35em; }
+  .reveal li:last-child { margin-bottom: 0; }
+  .reveal .columns { display: flex; gap: 2em; align-items: stretch; }
+  .reveal .columns > div { flex: 1; }
+  .panel {
+    padding: 22px 26px;
+    border-radius: 22px;
+    border: 1px solid var(--border);
+    background: linear-gradient(180deg, rgba(13, 21, 37, 0.90), rgba(10, 17, 30, 0.86));
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.30);
+  }
+  .card-grid {
+    display: grid;
+    gap: 16px;
+    align-items: stretch;
+  }
+  .card-grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .card-grid.four { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .info-card {
+    padding: 20px 20px 18px;
+    border-radius: 18px;
+    border: 1px solid rgba(127, 200, 255, 0.18);
+    background: linear-gradient(180deg, rgba(18, 30, 51, 0.92), rgba(12, 20, 34, 0.92));
+    text-align: left;
+  }
+  .info-card h3 {
+    margin-top: 0;
+    margin-bottom: 0.45em;
+    text-align: left;
+    font-size: 0.9em;
+    color: #f4f9ff;
+  }
+  .info-card p,
+  .info-card ul,
+  .info-card ol {
+    width: 100%;
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.76em;
+  }
+  .info-card ul,
+  .info-card ol { padding-left: 1.15em; }
+  .hero-panel {
+    padding: 28px 30px;
+    border-radius: 26px;
+    border: 1px solid var(--border);
+    background: linear-gradient(180deg, rgba(15, 25, 43, 0.96), rgba(10, 17, 28, 0.92));
+    box-shadow: 0 30px 64px rgba(0, 0, 0, 0.34);
+  }
+  .hero-panel p,
+  .hero-panel ol,
+  .hero-panel ul {
+    width: 100%;
+  }
+  .reveal table {
+    width: 100%;
+    font-size: 0.78em;
+    border-collapse: collapse;
+    background: rgba(9, 15, 27, 0.35);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .reveal th,
+  .reveal td {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 0.55em 0.65em;
+  }
+  .reveal th {
+    background: rgba(127, 200, 255, 0.12);
+    color: #f7fbff;
+  }
+  .flow-board {
+    background: linear-gradient(180deg, rgba(12, 20, 36, 0.96), rgba(9, 15, 28, 0.88));
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 26px 28px;
+    box-shadow: 0 26px 60px rgba(0, 0, 0, 0.34);
+    text-align: left;
+  }
+  .flow-lane + .flow-lane {
+    margin-top: 22px;
+    padding-top: 22px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .flow-lane-title {
+    display: inline-block;
+    margin-bottom: 16px;
+    padding: 0.4em 0.8em;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: rgba(127, 200, 255, 0.1);
+    color: #b6dcff;
+    font-size: 0.48em;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .flow-row {
+    display: grid;
+    gap: 14px;
+    align-items: stretch;
+  }
+  .flow-row.flow-auth {
+    grid-template-columns: 1.35fr 0.95fr 1.15fr 0.95fr 1.35fr;
+  }
+  .flow-row.flow-access {
+    grid-template-columns: 1.2fr 0.9fr 1.2fr 0.9fr 1.2fr 0.9fr 1.2fr;
+  }
+  .flow-node {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 104px;
+    padding: 18px 16px;
+    border-radius: 18px;
+    border: 1px solid rgba(127, 200, 255, 0.2);
+    background: linear-gradient(180deg, rgba(18, 31, 54, 0.96), rgba(12, 21, 38, 0.96));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+  .flow-node strong {
+    display: block;
+    margin-bottom: 6px;
+    color: #f5f9ff;
+    font-size: 0.8em;
+  }
+  .flow-node span {
+    color: var(--muted);
+    font-size: 0.54em;
+    line-height: 1.4;
+  }
+  .flow-node.browser { border-color: rgba(75, 227, 161, 0.28); }
+  .flow-node.identity { border-color: rgba(127, 200, 255, 0.3); }
+  .flow-node.app { border-color: rgba(255, 181, 71, 0.3); }
+  .flow-node.graph { border-color: rgba(196, 133, 255, 0.34); }
+  .flow-node.sharepoint { border-color: rgba(75, 227, 161, 0.32); }
+  .flow-arrow {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 104px;
+    padding: 14px 18px;
+    border: 1px dashed rgba(255, 255, 255, 0.12);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.04);
+  }
+  .flow-arrow::after {
+    content: "";
+    position: absolute;
+    right: -12px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-top: 12px solid transparent;
+    border-bottom: 12px solid transparent;
+    border-left: 12px solid rgba(127, 200, 255, 0.85);
+  }
+  .flow-arrow-content strong {
+    display: block;
+    margin-bottom: 4px;
+    color: #ffffff;
+    font-size: 0.92em;
+  }
+  .flow-arrow-content span {
+    display: block;
+    color: var(--muted);
+    font-size: 0.48em;
+    line-height: 1.35;
+  }
+  .flow-summary {
+    margin-top: 16px;
+    padding: 16px 18px;
+    border-radius: 16px;
+    background: rgba(75, 227, 161, 0.08);
+    border: 1px solid rgba(75, 227, 161, 0.18);
+    color: #dffbf0;
+    font-size: 0.58em;
+    line-height: 1.45;
+  }
+  .badge { display: inline-block; padding: 0.2em 0.6em; border-radius: 4px; font-size: 0.75em; font-weight: bold; color: #fff; }
+  .badge-blue { background: #0078d4; }
+  .badge-green { background: #107c10; }
+  .badge-orange { background: #d83b01; }
+  .badge-purple { background: #5c2d91; }
+  .check { color: #107c10; }
+  .warn { color: #d83b01; }
+  @media (max-width: 1200px) {
+    .reveal .columns {
+      flex-direction: column;
+    }
+    .card-grid.two,
+    .card-grid.four,
+    .flow-row.flow-auth,
+    .flow-row.flow-access {
+      grid-template-columns: 1fr;
+    }
+    .flow-arrow::after {
+      display: none;
+    }
+    .flow-arrow,
+    .flow-node {
+      min-height: auto;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- ====== SLIDE 1 — Titulo ====== -->
+<section>
+  <h1>On-Behalf-Of (OBO)<br>com Microsoft Graph</h1>
+  <p>Acessando SharePoint com identidade delegada</p>
+  <p class="small">Proof of Concept &mdash; ASP.NET Core + Microsoft Entra ID</p>
+</section>
+
+<!-- ====== SLIDE 2 — Agenda ====== -->
+<section>
+  <h2>Agenda</h2>
+  <div class="panel">
+    <ol>
+      <li>O que é o fluxo OBO?</li>
+      <li>Por que usar OBO com Graph API?</li>
+      <li>Fluxo completo passo a passo</li>
+      <li>Requisitos no Entra ID</li>
+      <li>Configuração e código</li>
+      <li>Demo ao vivo</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ====== SLIDE 3 — O que é OBO ====== -->
+<section>
+  <h2>O que é o fluxo On-Behalf-Of?</h2>
+  <div class="columns">
+    <div class="panel">
+      <ul>
+        <li>Um <strong>middle-tier</strong> recebe um token do usuário</li>
+        <li>Troca esse token por outro, delegado, para um recurso downstream</li>
+        <li>O recurso final vê a <strong>identidade do usuário original</strong></li>
+      </ul>
+    </div>
+    <div class="panel">
+      <p><span class="badge badge-blue">Delegado</span> &mdash; não é application permission</p>
+      <p><span class="badge badge-green">Seguro</span> &mdash; credencial confidencial no middle-tier</p>
+      <p><span class="badge badge-orange">Auditável</span> &mdash; token final identifica o usuário</p>
+    </div>
+  </div>
+</section>
+
+<!-- ====== SLIDE 4 — OBO vs outras abordagens ====== -->
+<section>
+  <h2>OBO vs. outras abordagens</h2>
+  <table style="font-size: 0.8em; width: 100%;">
+    <thead><tr><th></th><th>OBO (Delegado)</th><th>App-Only</th><th>Token direto</th></tr></thead>
+    <tbody>
+      <tr><td>Identidade no Graph</td><td class="check">✅ Usuário</td><td>App</td><td class="check">✅ Usuário</td></tr>
+      <tr><td>Respeita permissões do usuário</td><td class="check">✅ Sim</td><td class="warn">⚠️ Não</td><td class="check">✅ Sim</td></tr>
+      <tr><td>Middle-tier com credencial</td><td class="check">✅ Sim</td><td class="check">✅ Sim</td><td class="warn">⚠️ Não</td></tr>
+      <tr><td>Cenário multi-camada</td><td class="check">✅ Ideal</td><td>Parcial</td><td class="warn">⚠️ Não</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ====== SLIDE 5 — Por que OBO com Graph ====== -->
+<section>
+  <h2>Por que OBO com Graph API?</h2>
+  <div class="panel">
+    <ul>
+      <li>O usuário faz login na sua aplicação</li>
+      <li>O middle-tier precisa acessar <strong>SharePoint, OneDrive, Mail, Teams</strong> em nome desse usuário</li>
+      <li>Você não quer dar permissão de aplicativo para ler <em>tudo</em> do tenant</li>
+      <li>A auditoria no SharePoint mostra <strong>quem realmente acessou</strong></li>
+    </ul>
+    <p class="small">📌 Nesta PoC: listamos documentos de uma biblioteca SharePoint que o usuário autenticado pode ver</p>
+  </div>
+</section>
+
+<!-- ====== SLIDE 6 — Fluxo passo a passo ====== -->
+<section>
+  <h2>Fluxo completo</h2>
+  <div class="flow-board">
+    <div class="flow-lane">
+      <div class="flow-lane-title">Fase 1 · Autenticação do usuário</div>
+      <div class="flow-row flow-auth">
+        <div class="flow-node browser">
+          <strong>Navegador</strong>
+          <span>Usuário abre a aplicação em<br>https://localhost:7011</span>
+        </div>
+        <div class="flow-arrow">
+          <div class="flow-arrow-content">
+            <strong>1</strong>
+            <span>Redireciona para o login</span>
+          </div>
+        </div>
+        <div class="flow-node identity">
+          <strong>Microsoft Entra ID</strong>
+          <span>Autentica o usuário e valida a identidade</span>
+        </div>
+        <div class="flow-arrow">
+          <div class="flow-arrow-content">
+            <strong>2</strong>
+            <span>Retorna a sessão autenticada</span>
+          </div>
+        </div>
+        <div class="flow-node app">
+          <strong>Web App</strong>
+          <span>Recebe o usuário autenticado e prepara o acesso downstream</span>
+        </div>
+      </div>
+    </div>
+    <div class="flow-lane">
+      <div class="flow-lane-title">Fase 2 · OBO + Microsoft Graph + SharePoint</div>
+      <div class="flow-row flow-access">
+        <div class="flow-node app">
+          <strong>Web App</strong>
+          <span>Solicita token delegado para o Graph usando certificado X.509</span>
+        </div>
+        <div class="flow-arrow">
+          <div class="flow-arrow-content">
+            <strong>3</strong>
+            <span>Executa o exchange OBO</span>
+          </div>
+        </div>
+        <div class="flow-node identity">
+          <strong>Entra ID</strong>
+          <span>Emite token delegado para Graph em nome do usuário</span>
+        </div>
+        <div class="flow-arrow">
+          <div class="flow-arrow-content">
+            <strong>4</strong>
+            <span>Entrega o token downstream</span>
+          </div>
+        </div>
+        <div class="flow-node graph">
+          <strong>Microsoft Graph</strong>
+          <span>Resolve site, biblioteca e consulta o conteúdo</span>
+        </div>
+        <div class="flow-arrow">
+          <div class="flow-arrow-content">
+            <strong>5</strong>
+            <span>Consulta SharePoint com identidade delegada</span>
+          </div>
+        </div>
+        <div class="flow-node sharepoint">
+          <strong>SharePoint Online</strong>
+          <span>Retorna apenas os documentos que o usuário pode acessar</span>
+        </div>
+      </div>
+      <div class="flow-summary">
+        <strong>Resultado esperado:</strong> a aplicação mostra os documentos da biblioteca SharePoint sem usar permissão de aplicativo ampla e sem expor tokens ao usuário.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== SLIDE 7 — Requisitos Entra ID ====== -->
+<section>
+  <h2>Requisitos no Microsoft Entra ID</h2>
+  <div class="card-grid four">
+    <div class="info-card">
+      <h3>1. App Registration</h3>
+      <p>Configure a redirect URI web:</p>
+      <p><code>https://localhost:7011/signin-oidc</code></p>
+    </div>
+    <div class="info-card">
+      <h3>2. Certificado X.509</h3>
+      <p>Suba o <code>.cer</code> no app registration.</p>
+      <p>Evita client secret e melhora a postura de segurança.</p>
+    </div>
+    <div class="info-card">
+      <h3>3. Permissões delegadas</h3>
+      <ul>
+        <li><code>Sites.Read.All</code></li>
+        <li><code>Files.Read.All</code></li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <h3>4. Admin consent</h3>
+      <p>Conceda consentimento administrativo se o tenant exigir.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ====== SLIDE 8 — Certificado ====== -->
+<section>
+  <h2>Autenticação com certificado</h2>
+  <div class="columns">
+    <div class="panel">
+      <h3>Por que certificado?</h3>
+      <ul>
+        <li>Mais seguro que client secret</li>
+        <li>Não expira a cada 2 anos por default</li>
+        <li>Chave privada nunca sai da máquina</li>
+        <li>Só o <code>.cer</code> público vai para o Entra ID</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3>Gerar na PoC</h3>
+      <pre><code class="language-powershell">.\scripts\New-OboDemoCertificate.ps1 `
+  -PfxPassword "SuaSenha!"</code></pre>
+      <p class="small">Gera o certificado no store local e exporta <code>.cer</code> + <code>.pfx</code></p>
+    </div>
+  </div>
+</section>
+
+<!-- ====== SLIDE 9 — Código: Startup ====== -->
+<section>
+  <h2>Código: configuração da web app</h2>
+  <pre><code class="language-csharp">// Program.cs — Configuração do middleware de autenticação
+
+builder.Services
+    .AddMicrosoftIdentityWebAppAuthentication(
+        builder.Configuration, "AzureAd")
+    .EnableTokenAcquisitionToCallDownstreamApi(
+        builder.Configuration
+            .GetSection("OboDemo:GraphScopes")
+            .Get&lt;string[]&gt;() ?? Array.Empty&lt;string&gt;())
+    .AddInMemoryTokenCaches();</code></pre>
+  <p class="small">
+    <code>EnableTokenAcquisitionToCallDownstreamApi</code> habilita o OBO transparente.<br>
+    O certificado é carregado automaticamente pela configuração <code>AzureAd:ClientCertificates</code>.
+  </p>
+</section>
+
+<!-- ====== SLIDE 10 — Código: OBO executor ====== -->
+<section>
+  <h2>Código: aquisição do token OBO</h2>
+  <pre><code class="language-csharp">// OboSharePointService.cs — Dentro de GetDocumentsAsync()
+
+// 1. Pede token delegado para Graph em nome do usuário
+var token = await _tokenAcquisition
+    .GetAccessTokenForUserAsync(_options.GraphScopes);
+
+// 2. Usa o token para chamar Graph
+using var httpClient = _httpClientFactory.CreateClient("Graph");
+httpClient.DefaultRequestHeaders.Authorization =
+    new AuthenticationHeaderValue("Bearer", token);
+
+// 3. Chama Graph para listar documentos do SharePoint
+using var response = await httpClient
+    .GetAsync(requestUri, cancellationToken);</code></pre>
+  <p class="small">
+    O <code>ITokenAcquisition</code> do Microsoft.Identity.Web faz a troca OBO internamente.<br>
+    O token resultante é delegado: o Graph vê a identidade do usuário, não da aplicação.
+  </p>
+</section>
+
+<!-- ====== SLIDE 11 — Código: Resolução SharePoint ====== -->
+<section>
+  <h2>Código: resolução do alvo SharePoint</h2>
+  <pre><code class="language-csharp">// O serviço resolve automaticamente a URL configurada
+
+// Tenta localizar o site correto
+GET /sites/{host}:{path}
+
+// Localiza a biblioteca pelo nome
+GET /sites/{siteId}/drives
+
+// Lista os documentos da biblioteca ou pasta
+GET /drives/{driveId}/root/children
+    ?$top=10
+    &amp;$select=id,name,webUrl,lastModifiedDateTime,size,file,folder</code></pre>
+  <p class="small">
+    URLs como <code>https://tenant.sharepoint.com/BibliotecaXYZ</code> são resolvidas automaticamente para site + drive + pasta.
+  </p>
+</section>
+
+<!-- ====== SLIDE 12 — Configuração .env ====== -->
+<section>
+  <h2>Configuração local</h2>
+  <pre><code class="language-bash"># .env na raiz do repositório (git-ignored)
+
+AZURE_TENANT_ID=&lt;tenant-id&gt;
+AZURE_CLIENT_ID=&lt;client-id&gt;
+AZURE_CERTIFICATE_THUMBPRINT=&lt;thumbprint&gt;
+SHAREPOINT_URL=https://tenant.sharepoint.com/Biblioteca</code></pre>
+  <div class="card-grid two">
+    <div class="info-card">
+      <h3>Boas práticas</h3>
+      <p class="check">✅ Segredos fora do código</p>
+      <p class="check">✅ <code>.env</code> ignorado pelo Git</p>
+    </div>
+    <div class="info-card">
+      <h3>Operacionalização</h3>
+      <p class="check">✅ <code>.env.example</code> como template</p>
+      <p class="check">✅ Validação no startup</p>
+    </div>
+  </div>
+</section>
+
+<!-- ====== SLIDE 13 — O que a demo mostra ====== -->
+<section>
+  <h2>O que a demo mostra</h2>
+  <div class="card-grid two">
+    <div class="info-card">
+      <h3>Na tela</h3>
+      <ul>
+        <li>Usuário autenticado</li>
+        <li>Site SharePoint resolvido</li>
+        <li>Biblioteca de documentos</li>
+        <li>Lista de arquivos e pastas</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <h3>Technical Details</h3>
+      <ul>
+        <li>Cada passo do fluxo OBO</li>
+        <li>Timestamps de execução</li>
+        <li>Chamadas ao Graph realizadas</li>
+        <li><strong>Sem expor tokens</strong></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ====== SLIDE 14 — Pontos de atenção ====== -->
+<section>
+  <h2>Pontos de atenção</h2>
+  <div class="card-grid two">
+    <div class="info-card">
+      <h3><span class="badge badge-purple">Permissões</span></h3>
+      <p>São delegadas: o Graph respeita o acesso real do usuário no SharePoint.</p>
+    </div>
+    <div class="info-card">
+      <h3><span class="badge badge-orange">Consent</span></h3>
+      <p>Pode exigir admin consent, dependendo da política do tenant.</p>
+    </div>
+    <div class="info-card">
+      <h3><span class="badge badge-blue">Certificado</span></h3>
+      <p>A chave privada fica no ambiente local; o Entra recebe apenas o <code>.cer</code>.</p>
+    </div>
+    <div class="info-card">
+      <h3><span class="badge badge-green">Auditoria</span></h3>
+      <p>O SharePoint registra o acesso como sendo do usuário, não da aplicação.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ====== SLIDE 15 — Demo ====== -->
+<section>
+  <h1>🖥️ Demo ao vivo</h1>
+  <div class="hero-panel">
+    <p style="font-size: 1.2em; text-align: center;">
+      <code>https://localhost:7011</code>
+    </p>
+    <ol style="font-size: 0.9em;">
+      <li>Login no navegador</li>
+      <li>Navegação até a página de Documentos</li>
+      <li>Visualização dos dados do SharePoint</li>
+      <li>Inspeção dos Technical Details</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ====== SLIDE 16 — Próximos passos ====== -->
+<section>
+  <h2>Próximos passos</h2>
+  <div class="panel">
+    <ul>
+      <li>Adaptar para o cenário real do cliente</li>
+      <li>Separar app registration do front-end e do middle-tier</li>
+      <li>Considerar Managed Identity em ambiente Azure</li>
+      <li>Substituir o certificado de laboratório por credencial com governança corporativa</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ====== SLIDE 17 — Apêndice FE + BE ====== -->
+<section>
+  <h2>Apêndice: FE + BE com OBO</h2>
+  <div class="flow-board">
+    <div class="flow-lane">
+      <div class="flow-lane-title">Fase 1 · Front-end obtém token para a API</div>
+      <div class="flow-row flow-auth">
+        <div class="flow-node browser">
+          <strong>Front-end</strong>
+          <span>Usuário faz login e a aplicação pede um access token para a sua própria API</span>
+        </div>
+        <div class="flow-arrow">
+          <div class="flow-arrow-content">
+            <strong>1</strong>
+            <span>Autenticação e consentimento</span>
+          </div>
+        </div>
+        <div class="flow-node identity">
+          <strong>Microsoft Entra ID</strong>
+          <span>Emite token com <code>aud = API</code> para o cliente autenticado</span>
+        </div>
+        <div class="flow-arrow">
+          <div class="flow-arrow-content">
+            <strong>2</strong>
+            <span>Retorna o token da API</span>
+          </div>
+        </div>
+        <div class="flow-node browser">
+          <strong>Front-end</strong>
+          <span>Envia o bearer token para o backend no cabeçalho Authorization</span>
+        </div>
+      </div>
+    </div>
+    <div class="flow-lane">
+      <div class="flow-lane-title">Fase 2 · Backend executa o OBO para o Graph</div>
+      <div class="flow-row flow-access">
+        <div class="flow-node browser">
+          <strong>Front-end</strong>
+          <span>Chama a API com o token recebido do Entra ID</span>
+        </div>
+        <div class="flow-arrow">
+          <div class="flow-arrow-content">
+            <strong>3</strong>
+            <span>Bearer token para a API</span>
+          </div>
+        </div>
+        <div class="flow-node app">
+          <strong>Backend / API</strong>
+          <span>Valida o token e solicita o OBO para obter um token downstream do Graph</span>
+        </div>
+        <div class="flow-arrow">
+          <div class="flow-arrow-content">
+            <strong>4</strong>
+            <span>Exchange OBO</span>
+          </div>
+        </div>
+        <div class="flow-node identity">
+          <strong>Microsoft Entra ID</strong>
+          <span>Troca o token da API por um token delegado para o Microsoft Graph</span>
+        </div>
+        <div class="flow-arrow">
+          <div class="flow-arrow-content">
+            <strong>5</strong>
+            <span>Token do Graph</span>
+          </div>
+        </div>
+        <div class="flow-node graph">
+          <strong>Microsoft Graph</strong>
+          <span>Recebe a chamada do backend em nome do usuário autenticado</span>
+        </div>
+      </div>
+      <div class="flow-summary">
+        <strong>Regra importante:</strong> o front-end envia para o backend um <strong>access token da API</strong>, não um token do Graph e não um <code>id_token</code>.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== SLIDE 18 — Obrigado ====== -->
+<section>
+  <h1>Obrigado!</h1>
+  <div class="hero-panel">
+    <p>Dúvidas?</p>
+    <p class="small">
+      Repositório: <code>docs/</code> contém arquitetura e tutorial passo a passo<br>
+      <code>README.md</code> &mdash; guia rápido de setup
+    </p>
+  </div>
+</section>
+
+</div><!-- .slides -->
+</div><!-- .reveal -->
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.min.js"></script>
+<script>
+Reveal.initialize({
+  hash: true,
+  slideNumber: true,
+  plugins: [ RevealHighlight ]
+});
+</script>
+</body>
+</html>
