@@ -8,7 +8,9 @@ We grant You a nonexclusive, royalty-free right to use and modify the Sample Cod
 
 Please note: None of the conditions outlined in the disclaimer above will supersede the terms and conditions contained within the Customers Support Services Description.
 
-Sim. OBO com Microsoft Graph para listar documentos do SharePoint e possivel, mas o fluxo sempre precisa de um middle-tier confidencial.
+## Sobre
+
+Esta PoC demonstra como usar o fluxo On-Behalf-Of (OBO) com Microsoft Graph para listar documentos do SharePoint em nome do usuario autenticado. O fluxo OBO exige uma aplicacao confidencial (middle-tier) que troca o token do usuario por um token delegado para Graph.
 
 ## Caminho principal da PoC
 
