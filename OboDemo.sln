@@ -1,0 +1,27 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{AEFF6A11-6DF2-4561-8B79-E87F39A7C68F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OboWebDemo", "src\OboWebDemo\OboWebDemo.csproj", "{654B6B01-36DE-4E99-B9DB-3F620740294C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{654B6B01-36DE-4E99-B9DB-3F620740294C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{654B6B01-36DE-4E99-B9DB-3F620740294C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{654B6B01-36DE-4E99-B9DB-3F620740294C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{654B6B01-36DE-4E99-B9DB-3F620740294C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{654B6B01-36DE-4E99-B9DB-3F620740294C} = {AEFF6A11-6DF2-4561-8B79-E87F39A7C68F}
+	EndGlobalSection
+EndGlobal

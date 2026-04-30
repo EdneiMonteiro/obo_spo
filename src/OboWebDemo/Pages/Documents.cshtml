@@ -1,0 +1,160 @@
+@page
+@model DocumentsModel
+@*
+This Sample Code is provided for the purpose of illustration only and is not
+intended to be used in a production environment. THIS SAMPLE CODE AND ANY
+RELATED INFORMATION ARE PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER
+EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE.
+
+We grant You a nonexclusive, royalty-free right to use and modify the Sample
+Code and to reproduce and distribute the object code form of the Sample Code,
+provided that You agree: (i) to not use Our name, logo, or trademarks to market
+Your software product in which the Sample Code is embedded; (ii) to include a
+valid copyright notice on Your software product in which the Sample Code is
+embedded; and (iii) to indemnify, hold harmless, and defend Us and Our
+suppliers from and against any claims or lawsuits, including attorneys' fees,
+that arise or result from the use or distribution of the Sample Code.
+
+Please note: None of the conditions outlined in the disclaimer above will
+supersede the terms and conditions contained within the Customers Support
+Services Description.
+*@
+@{
+    ViewData["Title"] = "Documentos SharePoint";
+}
+
+<h2 class="mb-4">📂 Documentos do SharePoint</h2>
+
+@if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+{
+    <div class="alert alert-danger">
+        <strong>Erro:</strong> @Model.ErrorMessage
+    </div>
+}
+else if (Model.Result is not null)
+{
+    var result = Model.Result;
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card border-primary">
+                <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">Usuário autenticado</h6>
+                    <p class="card-text fw-bold">@User.Identity?.Name</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-primary">
+                <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">Site resolvido</h6>
+                    <p class="card-text fw-bold">@result.SiteName</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-primary">
+                <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">Biblioteca</h6>
+                    <p class="card-text fw-bold">
+                        @result.LibraryName
+                        @if (!string.IsNullOrWhiteSpace(result.FolderPath))
+                        {
+                            <span class="text-muted"> / @result.FolderPath</span>
+                        }
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (result.Items.Count == 0)
+    {
+        <div class="alert alert-info">Nenhum documento encontrado nesta biblioteca.</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Tipo</th>
+                        <th>Nome</th>
+                        <th>Última modificação</th>
+                        <th>Tamanho</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in result.Items)
+                    {
+                        var icon = item.File is not null ? "📄" : item.Folder is not null ? "📁" : "📎";
+                        var size = item.Size.HasValue ? FormatSize(item.Size.Value) : "—";
+                        var modified = item.LastModifiedDateTime?.ToLocalTime().ToString("yyyy-MM-dd HH:mm") ?? "—";
+                        <tr>
+                            <td>@icon</td>
+                            <td>
+                                @if (!string.IsNullOrWhiteSpace(item.WebUrl))
+                                {
+                                    <a href="@item.WebUrl" target="_blank" rel="noopener">@(item.Name ?? "(sem nome)")</a>
+                                }
+                                else
+                                {
+                                    @(item.Name ?? "(sem nome)")
+                                }
+                            </td>
+                            <td>@modified</td>
+                            <td>@size</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <div class="mt-4">
+        <div class="card">
+            <div class="card-header" role="button" data-bs-toggle="collapse" data-bs-target="#technicalDetails"
+                 aria-expanded="false" aria-controls="technicalDetails">
+                <h5 class="mb-0">
+                    🔍 Technical Details <small class="text-muted">(clique para expandir)</small>
+                </h5>
+            </div>
+            <div id="technicalDetails" class="collapse">
+                <div class="card-body">
+                    <p class="text-muted mb-3">
+                        Cada passo abaixo mostra o que aconteceu internamente durante o fluxo OBO,
+                        sem expor tokens ou credenciais.
+                    </p>
+                    <ol class="list-group list-group-numbered">
+                        @foreach (var step in result.Steps)
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-start">
+                                <div class="ms-2 me-auto">
+                                    <div>@step.Description</div>
+                                </div>
+                                <span class="badge bg-secondary rounded-pill">
+                                    @step.Timestamp.ToLocalTime().ToString("HH:mm:ss.fff")
+                                </span>
+                            </li>
+                        }
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="mt-4">
+    <a asp-page="/Index" class="btn btn-outline-secondary">← Voltar</a>
+</div>
+
+@functions {
+    static string FormatSize(long bytes)
+    {
+        if (bytes < 1024) return $"{bytes} B";
+        if (bytes < 1024 * 1024) return $"{bytes / 1024.0:F1} KB";
+        if (bytes < 1024 * 1024 * 1024) return $"{bytes / (1024.0 * 1024.0):F1} MB";
+        return $"{bytes / (1024.0 * 1024.0 * 1024.0):F2} GB";
+    }
+}

@@ -1,0 +1,22 @@
+# Build outputs
+**/bin/
+**/obj/
+
+# User-specific
+*.user
+*.suo
+*.userprefs
+.vs/
+
+# Environment and secrets
+.env
+*.pfx
+certs/
+
+# NuGet
+**/packages/
+
+# IDE
+.idea/
+*.swp
+*~
