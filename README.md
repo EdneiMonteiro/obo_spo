@@ -23,8 +23,6 @@ Antes de utilizar qualquer parte deste projeto em um ambiente produtivo ou crít
 Leia também:
 
 - [DISCLAIMER.md](./DISCLAIMER.md)
-- [SUPPORT.md](./SUPPORT.md)
-- [SECURITY.md](./SECURITY.md)
 
 ## O que este exemplo demonstra
 
@@ -64,18 +62,6 @@ Leia também:
 - O fluxo usa permissão delegada — só lista documentos que o usuário autenticado realmente pode acessar.
 - Se o tenant bloquear consentimento do usuário, o admin precisa conceder consentimento para `Sites.Read.All` e `Files.Read.All`.
 - O certificado local precisa conter chave privada. O upload no Entra ID usa apenas o `.cer` público.
-
-## Suporte
-
-Este projeto **não possui SLA nem suporte oficial**.
-
-Veja [SUPPORT.md](./SUPPORT.md) para detalhes.
-
-## Segurança
-
-Para relatar vulnerabilidades de segurança, veja [SECURITY.md](./SECURITY.md).
-
-⚠️ Não abra issues públicas para falhas de segurança.
 
 ## Aviso Legal
 
