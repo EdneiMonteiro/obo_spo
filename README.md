@@ -1,5 +1,10 @@
 # OBO Graph SharePoint Demo
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Azure](https://img.shields.io/badge/Cloud-Azure-0078D4?logo=microsoftazure&logoColor=white)](#)
+[![Last commit](https://img.shields.io/github/last-commit/EdneiMonteiro/obo_spo)](https://github.com/EdneiMonteiro/obo_spo/commits)
+[![ORCID](https://img.shields.io/badge/ORCID-0009--0006--0765--4201-A6CE39?logo=orcid&logoColor=white)](https://orcid.org/0009-0006-0765-4201)
+
 ## Visão Geral
 
 Este repositório contém código de exemplo / prova de conceito (PoC) com o objetivo de demonstrar como implementar o fluxo On-Behalf-Of (OBO) com Microsoft Graph para listar documentos do SharePoint em nome do usuário autenticado, utilizando .NET 8, Microsoft Entra ID e Microsoft Graph.
